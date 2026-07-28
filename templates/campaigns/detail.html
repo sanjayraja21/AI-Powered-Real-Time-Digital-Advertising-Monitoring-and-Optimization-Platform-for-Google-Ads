@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}{{ campaign.name }} - AI AdMonitor{% endblock %}
+{% block page_title %}Campaign AI Diagnosis: {{ campaign.name }}{% endblock %}
+
+{% block content %}
+<input type="hidden" id="campaign-id-input" value="{{ campaign.id }}">
+
+<!-- Top Campaign Header Banner -->
+<div class="saas-card" style="border-left: 4px solid var(--primary);">
+  <div class="card-header-flex">
+    <div>
+      <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase;">{{ campaign.business_name }} &bull; {{ campaign.product_name }}</span>
+      <h2 style="font-size: 1.6rem; font-weight: 800; margin-top: 0.2rem; color: #fff;">{{ campaign.name }}</h2>
+    </div>
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+      <span class="badge-severity badge-low" style="font-size: 0.85rem; padding: 0.4rem 0.9rem;">Status: {{ campaign.status }}</span>
+      <a href="{{ url_for('reports.index', type='performance') }}" class="btn-saas btn-outline btn-sm">
+        <i class="fa-solid fa-file-pdf"></i> Export Report
+      </a>
+    </div>
+  </div>
+
+  <!-- Campaign Metrics Strip -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+    <div>
+      <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Total Budget</div>
+      <div style="font-size: 1.25rem; font-weight: 800; color: #fff;">${{ campaign.budget }}</div>
+    </div>
+    <div>
+      <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Budget Used</div>
+      <div style="font-size: 1.25rem; font-weight: 800; color: {% if campaign.budget_used_percentage >= 90 %}var(--accent-rose){% else %}#fff{% endif %};">
+        ${{ campaign.cost }} ({{ campaign.budget_used_percentage }}%)
+      </div>
+    </div>
+    <div>
+      <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Clicks</div>
+      <div style="font-size: 1.25rem; font-weight: 800; color: #fff;">{{ campaign.clicks }}</div>
+    </div>
+    <div>
+      <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Impressions</div>
+      <div style="font-size: 1.25rem; font-weight: 800; color: #fff;">{{ campaign.impressions }}</div>
+    </div>
+    <div>
+      <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">CTR</div>
+      <div style="font-size: 1.25rem; font-weight: 800; color: var(--accent-cyan);">{{ campaign.ctr }}%</div>
+    </div>
+    <div>
+      <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Average CPC</div>
+      <div style="font-size: 1.25rem; font-weight: 800; color: var(--accent-amber);">${{ campaign.cpc }}</div>
+    </div>
+    <div>
+      <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Conversions</div>
+      <div style="font-size: 1.25rem; font-weight: 800; color: #fff;">{{ campaign.conversions }}</div>
+    </div>
+    <div>
+      <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Campaign ROI</div>
+      <div style="font-size: 1.25rem; font-weight: 800; color: var(--accent-emerald);">{{ campaign.roi }}%</div>
+    </div>
+  </div>
+</div>
+
+<!-- AI ANALYSIS ENGINE (4 MODULES DEEP DIVE) -->
+<h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
+  <i class="fa-solid fa-microchip" style="color: var(--primary);"></i> AI Analysis Engine Diagnostics
+</h3>
+
+<!-- AI Module A: FRAUD CHECK -->
+<div class="saas-card" style="border-left: 4px solid var(--accent-rose);">
+  <div class="card-header-flex">
+    <div class="card-title-lg">
+      <i class="fa-solid fa-shield-cat" style="color: var(--accent-rose);"></i>
+      <span>A. Fraud Check (Click Anomaly Engine)</span>
+    </div>
+    <span class="badge-severity badge-{{ diagnosis.ai_analysis.fraud_check.risk_level | lower }}">
+      Risk Level: {{ diagnosis.ai_analysis.fraud_check.risk_level }}
+    </span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; align-items: center;">
+    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem; text-align: center;">
+      <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Fraud Risk Score</div>
+      <div style="font-size: 2.8rem; font-weight: 900; color: var(--accent-rose); margin: 0.3rem 0;">
+        {{ diagnosis.ai_analysis.fraud_check.fraud_risk_score }}
+      </div>
+      <div style="font-size: 0.8rem; color: var(--text-dim);">Scikit-Learn IsolationForest</div>
+    </div>
+
+    <div>
+      <div style="margin-bottom: 0.75rem; font-size: 0.95rem;">
+        <strong>Suspicious Bot Clicks Flagged:</strong> <span style="color: var(--accent-rose); font-weight: 800;">{{ diagnosis.ai_analysis.fraud_check.suspicious_click_count }}</span> out of {{ diagnosis.ai_analysis.fraud_check.total_clicks }} click events.
+      </div>
+      <div style="margin-bottom: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">
+        <strong>Click Frequency Status:</strong> {{ diagnosis.ai_analysis.fraud_check.abnormal_click_frequency }}
+      </div>
+      {% if diagnosis.ai_analysis.fraud_check.flagged_ips %}
+      <div style="font-size: 0.85rem; background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); padding: 0.75rem; border-radius: var(--radius-sm);">
+        <i class="fa-solid fa-triangle-exclamation" style="color: var(--accent-rose);"></i>
+        <strong>Flagged Proxy IPs:</strong> {{ diagnosis.ai_analysis.fraud_check.flagged_ips | join(', ') }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- AI Module B: KEYWORD ANALYSIS -->
+<div class="saas-card" style="border-left: 4px solid var(--accent-cyan);">
+  <div class="card-header-flex">
+    <div class="card-title-lg">
+      <i class="fa-solid fa-key" style="color: var(--accent-cyan);"></i>
+      <span>B. Keyword Analysis & Classification</span>
+    </div>
+    <span class="badge-severity badge-low">
+      {{ diagnosis.ai_analysis.keyword_analysis.high_performing_count }} High / {{ diagnosis.ai_analysis.keyword_analysis.low_performing_count }} Low
+    </span>
+  </div>
+
+  <table class="saas-table">
+    <thead>
+      <tr>
+        <th>Keyword</th>
+        <th>Match Type</th>
+        <th>Clicks</th>
+        <th>CTR</th>
+        <th>CPC</th>
+        <th>Cost</th>
+        <th>Conversions</th>
+        <th>ROI</th>
+        <th>Performance Tier</th>
+        <th>AI Recommendation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for kw in keywords %}
+      <tr>
+        <td><strong>{{ kw.keyword_text }}</strong></td>
+        <td><span class="badge-severity badge-medium" style="font-size: 0.7rem;">{{ kw.match_type }}</span></td>
+        <td>{{ kw.clicks }}</td>
+        <td>{{ kw.ctr }}%</td>
+        <td>${{ kw.cpc }}</td>
+        <td>${{ kw.cost }}</td>
+        <td>{{ kw.conversions }}</td>
+        <td><strong>{{ kw.roi }}%</strong></td>
+        <td>
+          <span class="badge-severity badge-{% if kw.performance_tier == 'High' %}low{% elif kw.performance_tier == 'Average' %}medium{% else %}high{% endif %}">
+            {{ kw.performance_tier }}
+          </span>
+        </td>
+        <td style="font-size: 0.82rem; color: var(--text-muted);">
+          {{ kw.recommendation }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- AI Module C & D Two-Column Layout (Budget Optimization & Performance Prediction Simulator) -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.75rem;">
+  
+  <!-- AI Module C: BUDGET OPTIMIZATION -->
+  <div class="saas-card" style="border-left: 4px solid var(--accent-amber); margin-bottom: 0;">
+    <div class="card-header-flex">
+      <div class="card-title-lg">
+        <i class="fa-solid fa-coins" style="color: var(--accent-amber);"></i>
+        <span>C. Budget Optimization Engine</span>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.4rem;">
+        <span>Budget Utilization ({{ diagnosis.ai_analysis.budget_optimization.budget_used_percentage }}%)</span>
+        <strong>${{ campaign.cost }} / ${{ campaign.budget }}</strong>
+      </div>
+      <div style="width: 100%; background: var(--bg-dark); height: 10px; border-radius: 99px; overflow: hidden; border: 1px solid var(--border-color);">
+        <div style="width: {{ diagnosis.ai_analysis.budget_optimization.budget_used_percentage }}%; background: linear-gradient(90deg, var(--accent-amber), var(--accent-rose)); height: 100%;"></div>
+      </div>
+    </div>
+
+    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1rem;">
+      <div style="font-size: 0.8rem; font-weight: 700; color: var(--accent-amber); text-transform: uppercase;">AI Budget Action</div>
+      <div style="font-size: 1.15rem; font-weight: 800; margin: 0.2rem 0; color: #fff;">
+        {{ diagnosis.ai_analysis.budget_optimization.recommendation_action }}
+      </div>
+      <p style="font-size: 0.84rem; color: var(--text-muted);">
+        {{ diagnosis.ai_analysis.budget_optimization.reason }}
+      </p>
+    </div>
+  </div>
+
+  <!-- AI Module D: PERFORMANCE PREDICTION & WHAT-IF SIMULATOR -->
+  <div class="saas-card" style="border-left: 4px solid var(--primary); margin-bottom: 0;">
+    <div class="card-header-flex">
+      <div class="card-title-lg">
+        <i class="fa-solid fa-sliders" style="color: var(--primary);"></i>
+        <span>D. What-If Performance Simulator</span>
+      </div>
+      <span class="badge-severity badge-low">ML Model Active</span>
+    </div>
+
+    <div style="margin-bottom: 1.25rem;">
+      <label style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;">
+        <span>Adjust Budget Change (-50% to +100%):</span>
+        <strong id="budget-slider-val" style="color: var(--accent-cyan);">0%</strong>
+      </label>
+      <input type="range" id="budget-slider" class="range-slider" min="-50" max="100" value="0" step="5">
+    </div>
+
+    <!-- Predicted Metrics Cards Grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: rgba(255,255,255,0.02); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+      <div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Predicted Budget</div>
+        <div id="sim-budget" style="font-size: 1.1rem; font-weight: 800; color: #fff;">${{ campaign.budget }}</div>
+      </div>
+      <div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Predicted CTR</div>
+        <div id="sim-ctr" style="font-size: 1.1rem; font-weight: 800; color: var(--accent-cyan);">{{ diagnosis.ai_analysis.performance_prediction.predicted_ctr }}%</div>
+      </div>
+      <div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Predicted ROI</div>
+        <div id="sim-roi" style="font-size: 1.1rem; font-weight: 800; color: var(--accent-emerald);">{{ diagnosis.ai_analysis.performance_prediction.predicted_roi }}%</div>
+      </div>
+      <div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Predicted Conversions</div>
+        <div id="sim-conv" style="font-size: 1.1rem; font-weight: 800; color: #fff;">{{ diagnosis.ai_analysis.performance_prediction.predicted_conversions }}</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- HYBRID DECISION ENGINE RESULTS -->
+<div class="saas-card">
+  <div class="card-header-flex">
+    <div class="card-title-lg">
+      <i class="fa-solid fa-scale-balanced" style="color: var(--primary);"></i>
+      <span>Hybrid Decision Engine Outputs</span>
+    </div>
+    <span class="badge-severity badge-high">Status: {{ diagnosis.decision_engine.status }}</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+    <div>
+      <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--accent-amber);">Triggered Business Rules</h4>
+      {% for rule in diagnosis.decision_engine.triggered_rules %}
+      <div style="padding: 0.75rem; background: rgba(255,255,255,0.02); border-left: 3px solid var(--accent-amber); border-radius: var(--radius-sm); margin-bottom: 0.5rem; font-size: 0.85rem;">
+        <strong>{{ rule.title }}:</strong> {{ rule.problem }}
+      </div>
+      {% endfor %}
+    </div>
+
+    <div>
+      <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--accent-cyan);">Machine Learning Integrated Signals</h4>
+      {% for signal in diagnosis.decision_engine.ml_signals %}
+      <div style="padding: 0.75rem; background: rgba(255,255,255,0.02); border-left: 3px solid var(--accent-cyan); border-radius: var(--radius-sm); margin-bottom: 0.5rem; font-size: 0.85rem;">
+        <strong>{{ signal.signal_type }}:</strong> {{ signal.summary }}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- ALERTS & RECOMMENDATIONS SECTION -->
+<div class="saas-card">
+  <div class="card-header-flex">
+    <div class="card-title-lg">
+      <i class="fa-solid fa-lightbulb" style="color: var(--accent-amber);"></i>
+      <span>AI Recommendations for Business Owner</span>
+    </div>
+  </div>
+
+  {% for rec in recommendations %}
+  <div class="recommendation-box prio-{{ rec.priority }}">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+      <strong style="font-size: 1.05rem; color: #fff;">{{ rec.problem }}</strong>
+      <span class="badge-severity badge-{{ rec.priority | lower }}">Priority: {{ rec.priority }}</span>
+    </div>
+    
+    <div class="rec-grid-meta">
+      <div class="meta-block">
+        <strong>Root Cause / Reason</strong>
+        {{ rec.reason }}
+      </div>
+      <div class="meta-block">
+        <strong>AI Analysis Model Output</strong>
+        {{ rec.ai_analysis }}
+      </div>
+    </div>
+
+    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong style="color: var(--accent-cyan); font-size: 0.85rem;">Recommended Action:</strong>
+        <span style="font-size: 0.9rem; font-weight: 600;">{{ rec.recommended_action }}</span>
+      </div>
+      {% if rec.status == 'Pending' %}
+      <form method="POST" action="{{ url_for('alerts.apply_recommendation', rec_id=rec.id) }}">
+        <button type="submit" class="btn-saas btn-primary btn-sm">
+          <i class="fa-solid fa-check"></i> Apply Optimization
+        </button>
+      </form>
+      {% else %}
+      <span style="color: var(--accent-emerald); font-weight: 700; font-size: 0.85rem;">
+        <i class="fa-solid fa-check-double"></i> Applied
+      </span>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

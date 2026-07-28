@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Alerts & Recommendations - AI AdMonitor{% endblock %}
+{% block page_title %}Real-Time Alerts & Actionable AI Recommendations{% endblock %}
+
+{% block content %}
+<!-- Filtering Strip -->
+<div class="saas-card" style="padding: 1rem 1.5rem; margin-bottom: 1.5rem;">
+  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Filter Alerts:</span>
+      <a href="{{ url_for('alerts.index', severity='all') }}" class="btn-saas {% if selected_severity=='all' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">All Severities</a>
+      <a href="{{ url_for('alerts.index', severity='high') }}" class="btn-saas {% if selected_severity=='high' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">High</a>
+      <a href="{{ url_for('alerts.index', severity='medium') }}" class="btn-saas {% if selected_severity=='medium' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Medium</a>
+      <a href="{{ url_for('alerts.index', severity='low') }}" class="btn-saas {% if selected_severity=='low' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Low</a>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Category:</span>
+      <a href="{{ url_for('alerts.index', category='all') }}" class="btn-saas {% if selected_category=='all' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">All Categories</a>
+      <a href="{{ url_for('alerts.index', category='fraud') }}" class="btn-saas {% if selected_category=='fraud' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Fraud</a>
+      <a href="{{ url_for('alerts.index', category='budget') }}" class="btn-saas {% if selected_category=='budget' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Budget</a>
+      <a href="{{ url_for('alerts.index', category='keyword') }}" class="btn-saas {% if selected_category=='keyword' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Keywords</a>
+    </div>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+  
+  <!-- Active System Alerts Feed -->
+  <div class="saas-card">
+    <div class="card-header-flex">
+      <div class="card-title-lg">
+        <i class="fa-solid fa-bell" style="color: var(--accent-rose);"></i>
+        <span>Active Real-Time Alerts</span>
+      </div>
+      <span class="badge-severity badge-high">{{ alerts | length }} Total Alerts</span>
+    </div>
+
+    {% for alert in alerts %}
+    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem; margin-bottom: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase;">{{ alert.alert_type }}</span>
+        <span class="badge-severity badge-{{ alert.severity | lower }}">{{ alert.severity }} Severity</span>
+      </div>
+      <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: #fff;">{{ alert.title }}</h3>
+      <p style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 0.8rem;">{{ alert.problem }}</p>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-dim);">
+        <span>Logged: {{ alert.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+        <form method="POST" action="{{ url_for('alerts.dismiss_alert', alert_id=alert.id) }}">
+          <button type="submit" class="btn-saas btn-outline btn-sm">
+            <i class="fa-solid fa-check"></i> Dismiss Alert
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- AI Decision Recommendations Feed -->
+  <div class="saas-card">
+    <div class="card-header-flex">
+      <div class="card-title-lg">
+        <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-cyan);"></i>
+        <span>Actionable AI Recommendations</span>
+      </div>
+      <span class="badge-severity badge-low">{{ recommendations | length }} Recommendations</span>
+    </div>
+
+    {% for rec in recommendations %}
+    <div class="recommendation-box prio-{{ rec.priority }}">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase;">{{ rec.category }} Recommendation</span>
+        <span class="badge-severity badge-{{ rec.priority | lower }}">Priority: {{ rec.priority }}</span>
+      </div>
+
+      <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: #fff;">{{ rec.problem }}</h4>
+      
+      <div style="margin: 0.75rem 0; font-size: 0.86rem;">
+        <div style="margin-bottom: 0.4rem;">
+          <strong style="color: var(--accent-amber);">Reason:</strong> {{ rec.reason }}
+        </div>
+        <div style="margin-bottom: 0.4rem;">
+          <strong style="color: var(--primary);">AI Analysis:</strong> {{ rec.ai_analysis }}
+        </div>
+        <div>
+          <strong style="color: var(--accent-cyan);">Recommended Action:</strong> {{ rec.recommended_action }}
+        </div>
+      </div>
+
+      <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.8rem; color: var(--text-dim);">Status: <strong>{{ rec.status }}</strong></span>
+        {% if rec.status == 'Pending' %}
+        <form method="POST" action="{{ url_for('alerts.apply_recommendation', rec_id=rec.id) }}">
+          <button type="submit" class="btn-saas btn-primary btn-sm">
+            <i class="fa-solid fa-check"></i> Mark Executed in Google Ads
+          </button>
+        </form>
+        {% else %}
+        <span style="color: var(--accent-emerald); font-weight: 700; font-size: 0.85rem;">
+          <i class="fa-solid fa-check-double"></i> Applied by Business Owner
+        </span>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

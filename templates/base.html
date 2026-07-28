@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}AI AdMonitor - Real-Time Google Ads AI Optimization{% endblock %}</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons & Chart.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom SaaS Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <i class="fa-solid fa-brain"></i>
+      </div>
+      <div class="brand-text">
+        <h1>AI AdMonitor</h1>
+        <span>Google Ads AI Engine</span>
+      </div>
+    </div>
+
+    <ul class="sidebar-menu">
+      <li class="menu-label">Platform Core</li>
+      <li class="menu-item {% if request.endpoint == 'dashboard.index' %}active{% endif %}">
+        <a href="{{ url_for('dashboard.index') }}">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+
+      <li class="menu-item {% if 'campaigns' in request.endpoint %}active{% endif %}">
+        <a href="{{ url_for('campaigns.index') }}">
+          <i class="fa-solid fa-rectangle-ad"></i>
+          <span>Campaigns</span>
+        </a>
+      </li>
+
+      <li class="menu-item {% if request.endpoint == 'campaigns.connect' %}active{% endif %}">
+        <a href="{{ url_for('campaigns.connect') }}">
+          <i class="fa-solid fa-plug"></i>
+          <span>Google Ads Connect</span>
+        </a>
+      </li>
+
+      <li class="menu-label">AI Decision Engine</li>
+      <li class="menu-item {% if request.endpoint == 'alerts.index' %}active{% endif %}">
+        <a href="{{ url_for('alerts.index') }}">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Alerts & Recs</span>
+        </a>
+      </li>
+
+      <li class="menu-item {% if request.endpoint == 'analytics.index' %}active{% endif %}">
+        <a href="{{ url_for('analytics.index') }}">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Analytics</span>
+        </a>
+      </li>
+
+      <li class="menu-item {% if request.endpoint == 'reports.index' %}active{% endif %}">
+        <a href="{{ url_for('reports.index') }}">
+          <i class="fa-solid fa-file-invoice"></i>
+          <span>Reports</span>
+        </a>
+      </li>
+
+      <li class="menu-label">Account & System</li>
+      <li class="menu-item {% if request.endpoint == 'auth.profile' %}active{% endif %}">
+        <a href="{{ url_for('auth.profile') }}">
+          <i class="fa-solid fa-user"></i>
+          <span>Profile</span>
+        </a>
+      </li>
+
+      <li class="menu-item {% if request.endpoint == 'settings' %}active{% endif %}">
+        <a href="{{ url_for('settings') }}">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Application Wrapper -->
+  <div class="main-wrapper">
+
+    <!-- Top Navigation Header -->
+    <header class="top-navbar">
+      <div class="navbar-title">
+        <h2>{% block page_title %}Real-Time Dashboard{% endblock %}</h2>
+      </div>
+
+      <div class="navbar-actions">
+        <div id="realtime-status-pill" class="demo-status-pill">
+          <div class="pulse-dot"></div>
+          <span>Demo Mode: Live AI Polling</span>
+        </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="user-profile-menu">
+          <div class="avatar">{{ current_user.full_name[0] }}</div>
+          <div style="font-size: 0.88rem; font-weight: 600;">
+            {{ current_user.full_name }}
+            <div style="font-size: 0.72rem; color: var(--text-muted);">{{ current_user.company_name }}</div>
+          </div>
+          <a href="{{ url_for('auth.logout') }}" style="color: var(--accent-rose); margin-left: 0.5rem; text-decoration: none;" title="Logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </a>
+        </div>
+        {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn-saas btn-primary btn-sm">Login</a>
+        {% endif %}
+      </div>
+    </header>
+
+    <!-- Flash Notifications -->
+    <div style="padding: 1rem 2rem 0 2rem;">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div style="padding: 0.85rem 1.25rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-weight: 600; font-size: 0.9rem; background: {% if category=='danger' %}rgba(244, 63, 94, 0.15){% elif category=='success' %}rgba(16, 185, 129, 0.15){% else %}rgba(99, 102, 241, 0.15){% endif %}; border: 1px solid {% if category=='danger' %}var(--accent-rose){% elif category=='success' %}var(--accent-emerald){% else %}var(--primary){% endif %}; color: var(--text-main);">
+              <i class="fa-solid fa-circle-info" style="margin-right: 0.5rem;"></i> {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <!-- Main Content Body -->
+    <main class="content-body">
+      {% block content %}{% endblock %}
+    </main>
+
+  </div>
+
+</div>
+
+<!-- JavaScript Includes -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

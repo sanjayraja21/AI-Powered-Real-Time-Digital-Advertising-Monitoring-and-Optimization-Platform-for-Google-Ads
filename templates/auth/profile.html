@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile - AI AdMonitor{% endblock %}
+{% block page_title %}User Profile Settings{% endblock %}
+
+{% block content %}
+<div style="max-width: 650px; margin: 0 auto;">
+  <div class="saas-card">
+    <div class="card-header-flex">
+      <div class="card-title-lg">
+        <i class="fa-solid fa-id-badge" style="color: var(--primary);"></i>
+        <span>Business Owner Profile</span>
+      </div>
+      <span class="badge-severity badge-low">Account Active</span>
+    </div>
+
+    <form method="POST" action="{{ url_for('auth.profile') }}">
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Full Name</label>
+        <input type="text" name="full_name" value="{{ current_user.full_name }}" required style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff;">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Company / Business Name</label>
+        <input type="text" name="company_name" value="{{ current_user.company_name }}" required style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff;">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Email Address</label>
+        <input type="email" value="{{ current_user.email }}" disabled style="width: 100%; padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-dim); cursor: not-allowed;">
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Change Password (optional)</label>
+        <input type="password" name="new_password" placeholder="Leave blank to keep current password" style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff;">
+      </div>
+
+      <button type="submit" class="btn-saas btn-primary">
+        <i class="fa-solid fa-floppy-disk"></i> Save Profile Changes
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

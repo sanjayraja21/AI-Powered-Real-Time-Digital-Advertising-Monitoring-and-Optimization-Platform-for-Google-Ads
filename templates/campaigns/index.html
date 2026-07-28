@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Campaigns - AI AdMonitor{% endblock %}
+{% block page_title %}Google Ads Campaigns Overview{% endblock %}
+
+{% block content %}
+<div class="saas-card">
+  <div class="card-header-flex">
+    <div class="card-title-lg">
+      <i class="fa-solid fa-rectangle-ad" style="color: var(--primary);"></i>
+      <span>Monitored Google Ads Campaigns</span>
+    </div>
+    <a href="{{ url_for('campaigns.connect') }}" class="btn-saas btn-primary btn-sm">
+      <i class="fa-solid fa-plug"></i> Connect / Manage Account
+    </a>
+  </div>
+
+  <table class="saas-table">
+    <thead>
+      <tr>
+        <th>Campaign Name</th>
+        <th>Product & Business</th>
+        <th>Status</th>
+        <th>Budget ($)</th>
+        <th>Spend ($)</th>
+        <th>Clicks</th>
+        <th>CTR (%)</th>
+        <th>CPC ($)</th>
+        <th>Conversions</th>
+        <th>ROI (%)</th>
+        <th>AI Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for campaign in campaigns %}
+      <tr>
+        <td>
+          <a href="{{ url_for('campaigns.detail', campaign_id=campaign.id) }}" style="color: #fff; font-weight: 700; text-decoration: none;">
+            {{ campaign.name }}
+          </a>
+          <div style="font-size: 0.75rem; color: var(--text-dim);">ID: {{ campaign.google_campaign_id }}</div>
+        </td>
+        <td>
+          <strong>{{ campaign.product_name }}</strong>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">{{ campaign.business_name }}</div>
+        </td>
+        <td>
+          <span class="badge-severity badge-low">{{ campaign.status }}</span>
+        </td>
+        <td>${{ campaign.budget }}</td>
+        <td>
+          <span style="{% if campaign.budget_used_percentage >= 90 %}color: var(--accent-rose); font-weight: 700;{% endif %}">
+            ${{ campaign.cost }} ({{ campaign.budget_used_percentage }}%)
+          </span>
+        </td>
+        <td>{{ campaign.clicks }}</td>
+        <td>
+          <span style="{% if campaign.ctr < campaign.target_ctr %}color: var(--accent-amber);{% endif %}">
+            {{ campaign.ctr }}%
+          </span>
+        </td>
+        <td>
+          <span style="{% if campaign.cpc > campaign.acceptable_cpc %}color: var(--accent-rose);{% endif %}">
+            ${{ campaign.cpc }}
+          </span>
+        </td>
+        <td><strong>{{ campaign.conversions }}</strong></td>
+        <td>
+          <span class="badge-severity badge-low">{{ campaign.roi }}%</span>
+        </td>
+        <td>
+          <a href="{{ url_for('campaigns.detail', campaign_id=campaign.id) }}" class="btn-saas btn-outline btn-sm">
+            AI Diagnosis <i class="fa-solid fa-brain"></i>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

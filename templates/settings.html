@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - AI AdMonitor{% endblock %}
+{% block page_title %}Platform & AI Engine Settings{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+  
+  <div class="saas-card">
+    <div class="card-header-flex">
+      <div class="card-title-lg">
+        <i class="fa-solid fa-microchip" style="color: var(--primary);"></i>
+        <span>AI Engine & ML Model Status</span>
+      </div>
+      <span class="badge-severity badge-low">All Engines Operational</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <strong style="color: #fff;">Fraud Detection Engine</strong>
+          <span class="badge-severity badge-low">Active</span>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          Algorithm: <strong>Scikit-Learn IsolationForest</strong><br>
+          Contamination Rate: 0.15<br>
+          Anomalous IP Detection: Enabled
+        </div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <strong style="color: #fff;">Performance Predictor Engine</strong>
+          <span class="badge-severity badge-low">Active</span>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          Algorithm: <strong>RandomForestRegressor</strong><br>
+          Historical Training Window: 90 Days<br>
+          What-If Simulator: Ready
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="saas-card">
+    <div class="card-header-flex">
+      <div class="card-title-lg">
+        <i class="fa-solid fa-sliders" style="color: var(--accent-cyan);"></i>
+        <span>Decision Engine Threshold Configuration</span>
+      </div>
+    </div>
+
+    <form style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+      <div>
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Budget Alert Exhaustion Threshold (%)</label>
+        <input type="number" value="90" style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Fraud Anomaly Score Threshold</label>
+        <input type="number" step="0.05" value="0.65" style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Target Campaign CTR (%)</label>
+        <input type="number" step="0.1" value="6.0" style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Max Acceptable CPC ($)</label>
+        <input type="number" step="0.01" value="0.65" style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff;">
+      </div>
+
+      <div style="grid-column: span 2;">
+        <button type="button" onclick="alert('Threshold settings updated!')" class="btn-saas btn-primary">
+          <i class="fa-solid fa-floppy-disk"></i> Save Decision Engine Thresholds
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

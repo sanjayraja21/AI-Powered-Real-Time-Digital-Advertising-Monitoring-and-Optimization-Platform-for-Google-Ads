@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - AI AdMonitor{% endblock %}
+{% block page_title %}Advanced Campaign Analytics & Historical Trends{% endblock %}
+
+{% block content %}
+<div class="saas-card">
+  <div class="card-header-flex">
+    <div class="card-title-lg">
+      <i class="fa-solid fa-chart-line" style="color: var(--primary);"></i>
+      <span>30-Day Multi-Metric Performance Analysis</span>
+    </div>
+    <div style="font-size: 0.82rem; color: var(--text-muted);">
+      Granular Time-Series Data Visualization
+    </div>
+  </div>
+
+  <div style="height: 320px; position: relative;">
+    <canvas id="multiMetricAnalyticsChart"></canvas>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+  
+  <div class="saas-card">
+    <div class="card-header-flex">
+      <div class="card-title-lg">
+        <i class="fa-solid fa-fire" style="color: var(--accent-amber);"></i>
+        <span>Daily Spend vs. Daily Budget Burn Velocity</span>
+      </div>
+    </div>
+    <div style="height: 220px;">
+      <canvas id="spendVelocityChart"></canvas>
+    </div>
+  </div>
+
+  <div class="saas-card">
+    <div class="card-header-flex">
+      <div class="card-title-lg">
+        <i class="fa-solid fa-arrow-trend-up" style="color: var(--accent-emerald);"></i>
+        <span>Conversion Rate vs. Cost Per Click</span>
+      </div>
+    </div>
+    <div style="height: 220px;">
+      <canvas id="convCpcChart"></canvas>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  fetch('/analytics/api/time-series')
+    .then(res => res.json())
+    .then(data => {
+      const dates = data.map(d => d.date.substring(5));
+      const clicks = data.map(d => d.clicks);
+      const ctr = data.map(d => d.ctr);
+      const spend = data.map(d => d.spend);
+      const budget = data.map(d => d.daily_budget);
+      const convRate = data.map(d => d.conv_rate);
+      const cpc = data.map(d => d.cpc);
+
+      // Multi-Metric Chart
+      new Chart(document.getElementById('multiMetricAnalyticsChart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [
+            { label: 'Clicks', data: clicks, borderColor: '#6366f1', fill: false, tension: 0.3 },
+            { label: 'CTR (%)', data: ctr, borderColor: '#06b6d4', fill: false, tension: 0.3 },
+            { label: 'Daily Spend ($)', data: spend, borderColor: '#f59e0b', fill: false, tension: 0.3 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#9ca3af' } } }, scales: { x: { ticks: { color: '#9ca3af' } }, y: { ticks: { color: '#9ca3af' } } } }
+      });
+
+      // Spend Velocity Chart
+      new Chart(document.getElementById('spendVelocityChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: dates.slice(-14),
+          datasets: [
+            { label: 'Daily Spend ($)', data: spend.slice(-14), backgroundColor: '#f59e0b' },
+            { label: 'Budget Target ($)', data: budget.slice(-14), backgroundColor: 'rgba(255,255,255,0.1)' }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#9ca3af' } } }, scales: { x: { ticks: { color: '#9ca3af' } }, y: { ticks: { color: '#9ca3af' } } } }
+      });
+
+      // Conv vs CPC Chart
+      new Chart(document.getElementById('convCpcChart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: dates.slice(-14),
+          datasets: [
+            { label: 'Conversion Rate (%)', data: convRate.slice(-14), borderColor: '#10b981', tension: 0.3 },
+            { label: 'CPC ($)', data: cpc.slice(-14), borderColor: '#f43f5e', tension: 0.3 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#9ca3af' } } }, scales: { x: { ticks: { color: '#9ca3af' } }, y: { ticks: { color: '#9ca3af' } } } }
+      });
+
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Register - AI AdMonitor{% endblock %}
+{% block page_title %}Register Startup / Business Owner Account{% endblock %}
+
+{% block content %}
+<div style="max-width: 480px; margin: 2rem auto;">
+  <div class="saas-card" style="box-shadow: 0 12px 40px rgba(0,0,0,0.5);">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div class="brand-icon" style="margin: 0 auto 1rem auto; width: 48px; height: 48px; font-size: 1.5rem;">
+        <i class="fa-solid fa-rocket"></i>
+      </div>
+      <h2 style="font-size: 1.5rem; font-weight: 800;">Get Started with AI AdMonitor</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem;">Create your account to start optimizing Google Ads</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('auth.register') }}">
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Full Name</label>
+        <input type="text" name="full_name" placeholder="Alex Rivera" required style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff; font-size: 0.95rem;">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Company Name</label>
+        <input type="text" name="company_name" placeholder="ABC Electronics" required style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff; font-size: 0.95rem;">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Work Email Address</label>
+        <input type="email" name="email" placeholder="owner@abcelectronics.com" required style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff; font-size: 0.95rem;">
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Password</label>
+        <input type="password" name="password" placeholder="••••••••" required style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff; font-size: 0.95rem;">
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Confirm Password</label>
+        <input type="password" name="confirm_password" placeholder="••••••••" required style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: #fff; font-size: 0.95rem;">
+      </div>
+
+      <button type="submit" class="btn-saas btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 1rem;">
+        <i class="fa-solid fa-user-plus"></i> Create Account & Launch Demo
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem; font-size: 0.88rem; color: var(--text-muted);">
+      Already have an account? <a href="{{ url_for('auth.login') }}" style="color: var(--accent-cyan); font-weight: 600; text-decoration: none;">Log In</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

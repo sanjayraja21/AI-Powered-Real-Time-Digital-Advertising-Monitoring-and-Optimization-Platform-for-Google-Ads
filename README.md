@@ -44,3 +44,10 @@ Google Ads API
 → Alerts & Recommendations
 → Analytics Dashboard
 → Business Owner Optimizes Campaign
+
+
+## Author
+
+**Sanjay R.**
+
+B.Tech Artificial Intelligence and Data Science
